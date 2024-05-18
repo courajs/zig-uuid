@@ -1,14 +1,16 @@
 const std = @import("std");
 
-pub fn build(b: *std.build.Builder) void {
+pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    _ = b.addModule("uuid", .{
-        .source_file = .{
-            .path = "uuid.zig",
-        },
+    const libuuid = b.addStaticLibrary(.{
+        .name = "uuid",
+        .root_source_file = b.path("uuid.zig"),
+        .target = target,
+        .optimize = optimize,
     });
+    b.installArtifact(libuuid);
 
     const tests = b.addTest(.{
         .root_source_file = .{ .path = "uuid.zig" },
